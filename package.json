@@ -1,14 +1,17 @@
 {
   "name": "weirdos",
-  "module": "index.ts",
+  "module": "index.tsx",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
+    "dev": "bun run --hot src/index.tsx",
     "lint": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write src/",
     "format-check": "prettier --log-level warn --check src/"
+  },
+  "dependencies": {
+    "hono": "^4.8.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
