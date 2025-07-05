@@ -5,6 +5,7 @@ import { Page } from './client/Page';
 
 const app = new Hono();
 app.use('/static/*', serveStatic({ root: './' }));
+app.use('/favicon.ico', serveStatic({ path: './static/favicon.ico' }));
 
 app.get('/', (c) => {
   return c.html(
