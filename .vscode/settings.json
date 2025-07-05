@@ -12,5 +12,6 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "package.json": ".*,*.lock,tsconfig*,*.config.js"
-  }
+  },
+  "cSpell.words": ["bunx"]
 }

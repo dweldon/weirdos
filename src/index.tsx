@@ -1,12 +1,15 @@
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
+
 import { Page } from './client/Page';
 
 const app = new Hono();
+app.use('/static/*', serveStatic({ root: './' }));
 
 app.get('/', (c) => {
   return c.html(
     <Page>
-      <div>Hello World!</div>
+      <div className="text-3xl font-bold underline">Hello World!</div>
     </Page>
   );
 });
