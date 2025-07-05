@@ -4,14 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --hot src/index.tsx & bun run tailwind:watch",
+    "dev": "bun run --hot src/index.tsx & bun run tailwind:watch & bun run client:watch",
     "lint": "eslint . --fix",
-    "build": "bun run tailwind:build",
+    "build": "bun run client:build & bun run tailwind:build",
     "type-check": "tsc --noEmit",
     "format": "prettier --write src/",
     "format-check": "prettier --log-level warn --check src/",
-    "tailwind:watch": "bunx tailwindcss -i ./src/app.css -o ./static/app.css --watch",
-    "tailwind:build": "bunx tailwindcss -i ./src/app.css -o ./static/app.css --minify"
+    "client:watch": "bun build ./src/client/app.ts --outdir ./static --watch",
+    "client:build": "bun build ./src/client/app.ts --outdir ./static --minify",
+    "tailwind:watch": "bunx tailwindcss -i ./src/client/app.css -o ./static/app.css --watch",
+    "tailwind:build": "bunx tailwindcss -i ./src/client/app.css -o ./static/app.css --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.11",
