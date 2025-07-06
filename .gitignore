@@ -1,4 +1,6 @@
 .env
+*.key
+*.crt
 node_modules
 static/app.css
 static/app.js
