@@ -20,3 +20,14 @@ ws.onmessage = (event: MessageEvent) => {
 ws.onerror = (error: Event) => {
   console.error('WebSocket error:', error);
 };
+
+const localVideo = document.getElementById('local-video') as HTMLVideoElement;
+
+const fetchUserMedia = async (): Promise<void> => {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: true,
+  });
+  localVideo.srcObject = stream;
+};
+
+void fetchUserMedia();

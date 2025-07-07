@@ -1,23 +1,18 @@
 import { Hono } from 'hono';
+import { etag } from 'hono/etag';
 import type { ServerWebSocket } from 'bun';
 import { serveStatic, createBunWebSocket } from 'hono/bun';
 
-import { Page } from './client/Page';
 import { PORT, IS_DEVELOPMENT } from './lib/environment';
 
 const app = new Hono();
+app.use(etag());
 app.use('/static/*', serveStatic({ root: './' }));
 app.use('/favicon.ico', serveStatic({ path: './static/favicon.ico' }));
 
 const { websocket, upgradeWebSocket } = createBunWebSocket<ServerWebSocket>();
 
-app.get('/', (c) => {
-  return c.html(
-    <Page>
-      <div className="text-3xl font-bold underline">Hello World!</div>
-    </Page>
-  );
-});
+app.get('/', serveStatic({ path: './src/client/index.html' }));
 
 app.get('/ping', (c) => {
   return c.text('pong');
@@ -44,6 +39,7 @@ app.get(
     };
   })
 );
+
 let serverOptions: Bun.ServeFunctionOptions<unknown, object> = {
   port: PORT,
   fetch: app.fetch,

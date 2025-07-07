@@ -1,10 +1,10 @@
 {
   "name": "weirdos",
-  "module": "index.tsx",
+  "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --hot src/index.tsx & bun run tailwind:watch & bun run client:watch",
+    "dev": "bun run --hot src/index.ts & bun run tailwind:watch & bun run client:watch",
     "lint": "eslint . --fix",
     "build": "bun run client:build & bun run tailwind:build",
     "type-check": "tsc --noEmit",
