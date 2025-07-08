@@ -22,6 +22,21 @@ ws.onerror = (error: Event) => {
 };
 
 const localVideo = document.getElementById('local-video') as HTMLVideoElement;
+let peerConnection: RTCPeerConnection;
+
+const PEER_CONFIGURATION = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun.l.google.com:19302',
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302',
+        'stun:stun3.l.google.com:19302',
+        'stun:stun4.l.google.com:19302',
+      ],
+    },
+  ],
+};
 
 const fetchUserMedia = async (): Promise<void> => {
   const stream = await navigator.mediaDevices.getUserMedia({
@@ -30,4 +45,37 @@ const fetchUserMedia = async (): Promise<void> => {
   localVideo.srcObject = stream;
 };
 
-void fetchUserMedia();
+const createPeerConnection = async (): Promise<void> => {
+  peerConnection = new RTCPeerConnection(PEER_CONFIGURATION);
+
+  const localStream = localVideo.srcObject as MediaStream;
+  localStream.getTracks().forEach((track) => {
+    peerConnection.addTrack(track, localStream);
+  });
+
+  peerConnection.addEventListener('icecandidate', (e) => {
+    if (e.candidate) {
+      ws.send(
+        JSON.stringify({
+          type: 'ICE_CANDIDATE',
+          candidate: e.candidate,
+        })
+      );
+    }
+  });
+
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+  ws.send(JSON.stringify({ type: 'OFFER', offer }));
+};
+
+const setup = async (): Promise<void> => {
+  try {
+    await fetchUserMedia();
+    await createPeerConnection();
+  } catch (error) {
+    alert('Failed to start camera - did you allow access?');
+  }
+};
+
+void setup();

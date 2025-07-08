@@ -18,6 +18,21 @@ app.get('/ping', (c) => {
   return c.text('pong');
 });
 
+type OfferMessage = {
+  type: 'OFFER';
+  offer: RTCSessionDescriptionInit;
+};
+
+type IceCandidateMessage = {
+  type: 'ICE_CANDIDATE';
+  candidate: RTCIceCandidate;
+};
+
+type Message = OfferMessage | IceCandidateMessage;
+
+const offers: RTCSessionDescriptionInit[] = [];
+const iceCandidates: RTCIceCandidate[] = [];
+
 app.get(
   '/ws',
   upgradeWebSocket(() => {
@@ -25,13 +40,21 @@ app.get(
       onOpen: () => {
         console.log('Connection opened');
       },
-      onMessage(event, ws) {
-        const message =
-          typeof event.data === 'string'
-            ? event.data
-            : JSON.stringify(event.data);
-        console.log(`Message from client: ${message}`);
-        ws.send('Hello from server!');
+      onMessage(event) {
+        if (typeof event.data === 'string') {
+          try {
+            const data = JSON.parse(event.data) as Message;
+            if (data.type === 'OFFER') {
+              offers.push(data.offer);
+              console.log('Received offer', data.offer);
+            } else {
+              iceCandidates.push(data.candidate);
+              console.log('Received ice candidate', data.candidate);
+            }
+          } catch (error) {
+            console.log('Unknown message:', event.data);
+          }
+        }
       },
       onClose: () => {
         console.log('Connection closed');
